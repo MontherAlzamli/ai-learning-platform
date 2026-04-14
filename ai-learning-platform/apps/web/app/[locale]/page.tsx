@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import Chat from "@/components/chat";
+import Chat from "@/features/chat/components/Chat";
 import { Card } from "@/components/ui";
 
 export default function LocaleHomePage() {
