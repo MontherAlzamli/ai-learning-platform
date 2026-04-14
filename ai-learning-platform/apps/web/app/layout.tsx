@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 
+import "@openedx/paragon/dist/core.css";
 import "./globals.css";
 
 const geistSans = localFont({
