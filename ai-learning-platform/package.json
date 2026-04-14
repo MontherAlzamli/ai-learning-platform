@@ -20,5 +20,9 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "ai": "^6.0.159",
+    "openai": "^6.34.0"
+  }
 }

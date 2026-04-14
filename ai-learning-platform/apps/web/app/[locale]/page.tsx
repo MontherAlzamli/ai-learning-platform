@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Chat from "../../components/chat";
 
 export default function LocaleHomePage() {
   const t = useTranslations("common");
@@ -11,13 +12,12 @@ export default function LocaleHomePage() {
         <p className="mb-3 text-sm uppercase tracking-[0.3em] text-sky-300">
           AI Learning Platform
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight">{t("welcome")}</h1>
-        <button
-          type="button"
-          className="mt-8 rounded-full bg-sky-400 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-sky-300"
-        >
-          {t("login")}
-        </button>
+        <h1 className="text-4xl font-semibold tracking-tight">
+          {t("welcome")}
+        </h1>
+        <div className="p-10">
+          <Chat />
+        </div>
       </section>
     </main>
   );
