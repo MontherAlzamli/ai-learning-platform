@@ -33,8 +33,9 @@ export function Button({
         buttonClasses[variant],
         className
       )}
-      children={children}
       {...props}
-    />
+    >
+      {children}
+    </ParagonButton>
   );
 }
