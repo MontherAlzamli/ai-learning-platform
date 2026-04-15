@@ -1,64 +1,33 @@
-import { generateAssistantReply } from "@/lib/openai/chat";
-import { openAiApiKey } from "@/lib/openai/client";
-
-import type { IncomingChatMessage } from "../types";
-
-function sanitizeMessages(input: unknown): IncomingChatMessage[] {
-  if (!Array.isArray(input)) {
-    return [];
-  }
-
-  return input
-    .filter(
-      (message): message is IncomingChatMessage =>
-        typeof message === "object" &&
-        message !== null &&
-        "role" in message &&
-        "content" in message &&
-        typeof message.role === "string" &&
-        typeof message.content === "string"
-    )
-    .map((message) => ({
-      role: message.role,
-      content: message.content,
-    }));
-}
+import { openai } from "@ai-sdk/openai";
+import {
+  convertToModelMessages,
+  type UIMessage,
+  streamText,
+} from "ai";
 
 export async function handleChatPost(req: Request) {
   try {
-    if (!openAiApiKey) {
+    if (!process.env.OPENAI_API_KEY) {
       return Response.json(
         {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content:
+          error:
             "OPENAI_API_KEY is missing. Add it to apps/web/.env.local and restart the dev server.",
         },
         { status: 500 }
       );
     }
 
-    const body = (await req.json()) as { messages?: unknown };
-    const messages = sanitizeMessages(body.messages);
+    const body = (await req.json()) as {
+      messages?: UIMessage[];
+    };
+    const messages = Array.isArray(body.messages) ? body.messages : [];
 
-    if (messages.length === 0) {
-      return Response.json(
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: "Please send a message first.",
-        },
-        { status: 400 }
-      );
-    }
-
-    const content = await generateAssistantReply(messages);
-
-    return Response.json({
-      id: crypto.randomUUID(),
-      role: "assistant",
-      content,
+    const result = streamText({
+      model: openai("gpt-4o-mini"),
+      messages: await convertToModelMessages(messages),
     });
+
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     const status =
       typeof error === "object" && error && "status" in error
@@ -74,9 +43,7 @@ export async function handleChatPost(req: Request) {
     if (status === 429 || code === "insufficient_quota") {
       return Response.json(
         {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content:
+          error:
             "OpenAI quota exceeded (429). Check your OpenAI plan/billing and API key limits, then try again.",
         },
         { status: 429 }
@@ -85,10 +52,7 @@ export async function handleChatPost(req: Request) {
 
     return Response.json(
       {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content:
-          "Server error while calling the model. Check the server log for details and try again.",
+        error: "Server error while calling the model. Check server logs.",
       },
       { status: 500 }
     );
