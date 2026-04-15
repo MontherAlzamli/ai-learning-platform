@@ -1,12 +1,13 @@
 import { Button as ParagonButton } from "@openedx/paragon";
-import type { ComponentProps } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { cn } from "./cn";
 
 type ButtonVariant = "primary" | "secondary";
 
-type ButtonProps = Omit<ComponentProps<typeof ParagonButton>, "variant"> & {
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
+  children: ReactNode;
 };
 
 const buttonVariantMap: Record<ButtonVariant, "primary" | "secondary"> = {
@@ -33,7 +34,7 @@ export function Button({
         buttonClasses[variant],
         className
       )}
-      {...props}
+      {...(props as Record<string, unknown>)}
     >
       {children}
     </ParagonButton>

@@ -1,68 +1,45 @@
 "use client";
 
-import { useState } from "react";
-
-import { postChatMessage } from "@/lib/api-client/chat";
-
-import type { ChatMessage } from "../types";
+import { useChat as useVercelChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { useCallback, useState } from "react";
 
 export function useChat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const chat = useVercelChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+  });
 
-  async function submitMessage(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const handleInputChange = useCallback(
+    (nextValue: string) => {
+      setInput(nextValue);
+    },
+    [setInput]
+  );
 
-    const trimmedInput = input.trim();
-    if (!trimmedInput || isLoading) {
-      return;
-    }
+  const handleSubmit = useCallback(
+    async (event?: { preventDefault?: () => void }) => {
+      event?.preventDefault?.();
 
-    const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: trimmedInput,
-    };
-    const nextMessages = [...messages, userMessage];
+      const trimmedInput = input.trim();
+      if (!trimmedInput || chat.status === "submitted" || chat.status === "streaming") {
+        return;
+      }
 
-    setMessages(nextMessages);
-    setInput("");
-    setIsLoading(true);
-
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 15000);
-
-    try {
-      const assistantMessage = await postChatMessage(
-        { messages: nextMessages },
-        controller.signal
-      );
-      setMessages((current) => [...current, assistantMessage]);
-    } catch (error) {
-      const message =
-        error instanceof Error && error.message
-          ? error.message
-          : "The request timed out or failed. Check the server log and try again.";
-      setMessages((current) => [
-        ...current,
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: message,
-        },
-      ]);
-    } finally {
-      window.clearTimeout(timeoutId);
-      setIsLoading(false);
-    }
-  }
+      setInput("");
+      await chat.sendMessage({ text: trimmedInput });
+    },
+    [chat, input]
+  );
 
   return {
-    messages,
+    ...chat,
     input,
-    isLoading,
     setInput,
-    submitMessage,
+    handleInputChange,
+    handleSubmit,
+    isLoading: chat.status === "submitted" || chat.status === "streaming",
   };
 }
