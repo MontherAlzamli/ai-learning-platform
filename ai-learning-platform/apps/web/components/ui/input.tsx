@@ -1,14 +1,8 @@
-import {
-  FormControl,
-  FormControlFeedback,
-  FormGroup,
-  FormLabel,
-} from "@openedx/paragon";
-import type { ComponentProps } from "react";
+import type { InputHTMLAttributes } from "react";
 
 import { cn } from "./cn";
 
-type InputProps = ComponentProps<typeof FormControl> & {
+type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   error?: string;
 };
@@ -18,31 +12,30 @@ export function Input({ label, error, id, className, ...props }: InputProps) {
   const errorId = `${inputId}-error`;
 
   return (
-    <FormGroup className="w-full">
+    <div className="w-full">
       {label ? (
-        <FormLabel
-          htmlFor={inputId}
-          className="mb-1.5 block text-sm font-medium text-slate-200"
-        >
+        <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-slate-200">
           {label}
-        </FormLabel>
+        </label>
       ) : null}
 
-      <FormControl
+      <input
         id={inputId}
-        isInvalid={Boolean(error)}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
         className={cn(
-          "w-full rounded-md text-sm",
+          "w-full rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-3 text-sm text-slate-100 outline-none transition-colors placeholder:text-slate-400 focus:border-sky-400",
+          error ? "border-rose-400/70 focus:border-rose-400" : null,
           className
         )}
         {...props}
       />
 
       {error ? (
-        <FormControlFeedback id={errorId} hasIcon={false}>
+        <p id={errorId} className="mt-1.5 text-sm text-rose-300">
           {error}
-        </FormControlFeedback>
+        </p>
       ) : null}
-    </FormGroup>
+    </div>
   );
 }

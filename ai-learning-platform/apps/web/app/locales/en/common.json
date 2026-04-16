@@ -1,4 +1,41 @@
 {
   "welcome": "Welcome to AI Learning Platform",
-  "login": "Login"
+  "login": "Login",
+  "app": {
+    "description": "Your authenticated AI workspace is ready for user-specific conversations, learning journeys, and future SaaS features.",
+    "sessionLabel": "Active session",
+    "greeting": "Welcome back, {name}"
+  },
+  "auth": {
+    "brand": "AI Learning Platform",
+    "name": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "loginTitle": "Sign in to your workspace",
+    "loginDescription": "Access your private AI learning experience, saved context, and future account-level features.",
+    "signupTitle": "Create your account",
+    "signupDescription": "Start with a secure account foundation that is ready for chat history, dashboards, and billing.",
+    "placeholders": {
+      "name": "Ada Lovelace",
+      "email": "you@example.com",
+      "password": "At least 8 characters",
+      "confirmPassword": "Repeat your password"
+    },
+    "actions": {
+      "login": "Sign in",
+      "signup": "Create account",
+      "logout": "Sign out",
+      "loading": "Please wait..."
+    },
+    "switch": {
+      "noAccount": "New here?",
+      "hasAccount": "Already have an account?"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "invalidCredentials": "Invalid email or password.",
+      "passwordMismatch": "Passwords do not match."
+    }
+  }
 }
