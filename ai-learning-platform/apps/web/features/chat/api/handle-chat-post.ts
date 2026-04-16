@@ -5,8 +5,21 @@ import {
   streamText,
 } from "ai";
 
+import { getServerAuthSession } from "@/lib/auth";
+
 export async function handleChatPost(req: Request) {
   try {
+    const session = await getServerAuthSession();
+
+    if (!session?.user) {
+      return Response.json(
+        {
+          error: "You need to be signed in to use the chat.",
+        },
+        { status: 401 }
+      );
+    }
+
     if (!process.env.OPENAI_API_KEY) {
       return Response.json(
         {

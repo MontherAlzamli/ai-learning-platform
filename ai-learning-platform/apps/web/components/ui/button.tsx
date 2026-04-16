@@ -1,4 +1,3 @@
-import { Button as ParagonButton } from "@openedx/paragon";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { cn } from "./cn";
@@ -15,11 +14,6 @@ const buttonVariantMap: Record<ButtonVariant, "primary" | "secondary"> = {
   secondary: "secondary",
 };
 
-const buttonClasses: Record<ButtonVariant, string> = {
-  primary: "rounded-md font-medium",
-  secondary: "rounded-md font-medium",
-};
-
 export function Button({
   variant = "primary",
   className,
@@ -27,16 +21,19 @@ export function Button({
   ...props
 }: ButtonProps) {
   return (
-    <ParagonButton
-      variant={buttonVariantMap[variant]}
+    <button
+      type="button"
       className={cn(
-        "transition-colors",
-        buttonClasses[variant],
+        "inline-flex items-center justify-center rounded-md border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+        variant === "primary"
+          ? "border-sky-500 bg-sky-500 text-slate-950 hover:border-sky-400 hover:bg-sky-400"
+          : "border-white/15 bg-white/5 text-white hover:bg-white/10",
         className
       )}
-      {...(props as Record<string, unknown>)}
+      data-variant={buttonVariantMap[variant]}
+      {...props}
     >
       {children}
-    </ParagonButton>
+    </button>
   );
 }

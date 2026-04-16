@@ -1,6 +1,12 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "globalEnv": ["OPENAI_API_KEY"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "NODE_ENV",
+    "OPENAI_API_KEY"
+  ],
   "ui": "tui",
   "tasks": {
     "build": {
