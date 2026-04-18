@@ -1,3 +1,5 @@
+import type { UIMessage } from "ai";
+
 export type ChatRole = "user" | "assistant" | "system";
 
 export type ChatMessage = {
@@ -9,4 +11,16 @@ export type ChatMessage = {
 export type IncomingChatMessage = {
   role: ChatRole;
   content: string;
+};
+
+export type ConversationSummary = {
+  id: string;
+  title: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ConversationDetail = {
+  conversation: ConversationSummary;
+  messages: UIMessage[];
 };
