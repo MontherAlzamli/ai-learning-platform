@@ -12,6 +12,7 @@ type ChatInputProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   onStop: () => void;
   isStreaming: boolean;
+  disabled?: boolean;
 };
 
 export default function ChatInput({
@@ -20,6 +21,7 @@ export default function ChatInput({
   onSubmit,
   onStop,
   isStreaming,
+  disabled = false,
 }: ChatInputProps) {
   return (
     <form
@@ -36,11 +38,12 @@ export default function ChatInput({
         onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
-            if (!isStreaming && input.trim()) {
+            if (!disabled && !isStreaming && input.trim()) {
               event.currentTarget.form?.requestSubmit();
             }
           }
         }}
+        disabled={disabled}
         className="max-h-40 min-h-[52px] flex-1 resize-y rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-3 text-sm text-slate-100 placeholder:text-slate-400"
         placeholder="Send a message..."
         aria-label="Chat message input"
@@ -51,7 +54,11 @@ export default function ChatInput({
           Stop
         </Button>
       ) : (
-        <Button type="submit" variant="primary" disabled={!input.trim()}>
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={disabled || !input.trim()}
+        >
           Send
         </Button>
       )}

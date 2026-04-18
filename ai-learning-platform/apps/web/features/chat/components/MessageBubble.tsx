@@ -6,35 +6,19 @@ import remarkGfm from "remark-gfm";
 
 import { cn } from "@/components/ui/cn";
 
+import { extractTextFromUiMessage } from "../lib/message";
+
 type MessageBubbleProps = {
   message: UIMessage;
   showTypingCursor?: boolean;
 };
-
-function getMessageText(message: UIMessage): string {
-  if (Array.isArray(message.parts)) {
-    return message.parts
-      .filter(
-        (
-          part
-        ): part is {
-          type: "text";
-          text: string;
-        } => part.type === "text" && typeof part.text === "string"
-      )
-      .map((part) => part.text)
-      .join("");
-  }
-
-  return "";
-}
 
 export default function MessageBubble({
   message,
   showTypingCursor = false,
 }: MessageBubbleProps) {
   const isUser = message.role === "user";
-  const text = getMessageText(message);
+  const text = extractTextFromUiMessage(message);
 
   return (
     <div className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}>
